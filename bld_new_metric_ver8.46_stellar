@@ -1,0 +1,6 @@
+LIBSTELL=/home/epaul/STELLOPT/LIBSTELL/Release
+LIBSTELLA=/home/epaul/STELLOPT/LIBSTELL/Release/libstell.a
+NETCDFDIR=/usr/local/netcdf/gcc/hdf5-1.10.6/openmpi-4.1.0/4.7.4
+
+ifort -O2 -c metric_element_create_ver8.46.f -I$LIBSTELL -I$NETCDFDIR/include 
+ifort -O2 -o xmetric_ver8.46 metric_element_create_ver8.46.o -I$LIBSTELL $LIBSTELLA  -lnetcdf -L$NETCDFDIR/lib -lhdf5_hl -lhdf5_fortran -lhdf5 -lnetcdff
