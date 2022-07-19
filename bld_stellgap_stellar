@@ -1,0 +1,15 @@
+MKLROOT=/opt/intel/oneapi/mkl/2021.1.1/
+MKLINCLUDE="-I${MKLROOT}/include"
+MKLLINK="${MKLROOT}/lib/intel64/libmkl_intel_lp64.a ${MKLROOT}/lib/intel64/libmkl_core.a ${MKLROOT}/lib/intel64/libmkl_sequential.a -lpthread -lm"
+FC=ifort
+FFLAGS=" -O2 -fixed -shared -Wl,--no-undefined -Wl,-export-dynamic -fPIC"
+
+cp stellgap_ver5.f temp.c
+ifort -fpp -E -P -C -DSERIAL temp.c > temp.f
+$FC $FFLAGS $MKLINCLUDE $MKLLINK -llapack -c temp.f
+mv temp.o stellgap.o
+rm temp.c temp.f
+
+$FC $FFLAGS -c $OPT Fourier_lib_convolve.f
+$FC $FFLAGS -c $OPT fitpack.f
+$FC $FFLAGS -o xstgap -I. -mkl $MKLINCLUDE $MKLLINK stellgap.o Fourier_lib_convolve.o fitpack.o 
