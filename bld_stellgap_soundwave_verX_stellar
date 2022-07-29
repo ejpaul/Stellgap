@@ -1,0 +1,17 @@
+MKLROOT=/opt/intel/oneapi/mkl/2021.1.1/
+MKLINCLUDE="-I${MKLROOT}/include"
+MKLLINK="${MKLROOT}/lib/intel64/libmkl_intel_lp64.a ${MKLROOT}/lib/intel64/libmkl_core.a ${MKLROOT}/lib/intel64/libmkl_sequential.a -lpthread -lm"
+FC=mpiifort
+FFLAGS=" -O2 -fixed -export-dynamic -fPIC"
+
+LIBSTELL=/home/epaul/STELLOPT/LIBSTELL/Release
+LIBSTELLA=/home/epaul/STELLOPT/LIBSTELL/Release/libstell.a
+
+cp stellgap_soundwave_lagrng_ver7.f temp.c
+$FC -fpp -E -P -C -DPARALLEL -I$LIBSTELL temp.c > temp.f
+$FC $FFLAGS $MKLINCLUDE $MKLLINK -llapack -I$LIBSTELL -c temp.f
+mv temp.o stellgap_soundwave_lagrng_ver$1.o
+
+$FC $FFLAGS -c $OPT Fourier_lib_convolve.f -I$LIBSTELL
+$FC $FFLAGS -c $OPT fitpack.f
+$FC $FFLAGS -o xstgap_snd_ver7 -I. -mkl $MKLINCLUDE $MKLLINK -I$LIBSTELL $LIBSTELLA stellgap_soundwave_lagrng_ver$1.o Fourier_lib_convolve.o fitpack.o
