@@ -60,7 +60,7 @@ C-----------------------------------------------
       REAL(kind=rprec), DIMENSION(3,3) :: mat_diag
        integer :: nsurf
        real(kind=rprec):: phipc, iotac, jtorc, jpolc,
-     1  presc, prespc, jtorpc, jpolpc, phippc, iotapc 
+     1  presc, prespc, jtorpc, jpolpc, phippc, iotapc
        real(kind=rprec) :: phis, phize, phith, rboo, rs,
      2  rze, rth, zs, zze, zth, arg, ccosi, ssine, num1,
      3  num2, ibf2, ibf3, rboo2, rjac2, rjac2i, gtssub, gstsub,
@@ -75,7 +75,7 @@ C-----------------------------------------------
       character arg1*40,warg1*45,bozout*45
       character*1 tb
       integer nargs, numargs, numchars, itheta, izeta, nznt
-      integer iargc, getarg, unit_no, istat, ierr, ig, lf, is
+      integer iargc, unit_no, istat, ierr, ig, lf, is
       real viz_flux   !for plotting interior flux surfaces in AVS
       real surf_area_element, surf_area_total
       logical lasym, viz, test_jacob, test_upr_lowr,
@@ -88,7 +88,7 @@ C-----------------------------------------------
       make_full_torus = .true.
       surf_compute = .true.
       numargs = iargc()
-      numchars = getarg(1,arg1)
+      call getarg(1,arg1)
       if( numargs.ne.1 )then
         print *,' MUST ENTER FILE SUFFIX ON COMMAND LINE'
         stop
@@ -113,11 +113,11 @@ c      write(*,*) warg1
 c      call read_wout_file(warg1,ierr)
       call read_boozer_file(warg1,ierr)
        if (istat.ne.0) stop 22
-       
+
        nfp = nfp_b
        nsd = ns_b
        aspect = aspect_b
-       r0max = rmax_b 
+       r0max = rmax_b
        r0min = rmin_b
        betaxis = betaxis_b
        mnboz = mnboz_b
@@ -126,10 +126,10 @@ c
        write(47,*) nfp, izeta, itheta
       endif
 c
-!...   IOTA, PRES, PHIP (= -PHIP_VMEC), JTOR (=I = -BUCO_VMEC) and 
-!         JPOL (=J = BVCO_VMEC) are ALL on HALF-MESH!!!   
-    
-       allocate (hiota(nsd), hpres(nsd), hjpol(nsd), hjtor(nsd), 
+!...   IOTA, PRES, PHIP (= -PHIP_VMEC), JTOR (=I = -BUCO_VMEC) and
+!         JPOL (=J = BVCO_VMEC) are ALL on HALF-MESH!!!
+
+       allocate (hiota(nsd), hpres(nsd), hjpol(nsd), hjtor(nsd),
      1   hphip(nsd), jprl_coef0(nsd), jprl_coef1(nsd),
      2   jprl_coef2(nsd), stat=istat)
        if (istat .ne. 0) stop 23
@@ -138,7 +138,7 @@ c
        hpres(k) = mu_0*pres_bw(k)  ! in VMEC versions > 6.00 pressure is given in pascals
        hphip(k) = -phip_bw(k)        ! toroidal fluxes have REVERSED sign respect to VMEC!!
        hjpol(k) = bvco_bw(k)
-       hjtor(k) = -buco_bw(k)        ! toroidal fluxes have REVERSED sign respect to VMEC!! 
+       hjtor(k) = -buco_bw(k)        ! toroidal fluxes have REVERSED sign respect to VMEC!!
 c       write(*,'(i4,5(2x,e12.5))') k,hiota(k),hpres(k),hphip(k),
 c     1     hjpol(k),hjtor(k)
        end do
@@ -159,11 +159,11 @@ c       b0 = sqrt((two/beta0)*(1.5_dp*hpres(2)-.5_dp*hpres(3)))
        do mn=1,mnboz
        xm(mn) = ixm_bw(mn)
        xn(mn) = ixn_bw(mn)
-c       write(*,*) mn,xm(mn),xn(mn)              
+c       write(*,*) mn,xm(mn),xn(mn)
        end do
 !...   RMN, ZMN, PMN and BMN are ALL on HALF-MESH
 
-       allocate (rmncbh(mnboz,nsd), zmnsbh(mnboz,nsd), 
+       allocate (rmncbh(mnboz,nsd), zmnsbh(mnboz,nsd),
      1           pmnsbh(mnboz,nsd), bmncbh(mnboz,nsd), stat = istat)
        if (istat .ne. 0) stop 25
 
@@ -174,7 +174,7 @@ c       write(*,*) mn,xm(mn),xn(mn)
          bmncbh(mn,k) = bmnc_bw(mn,k)
          rmncbh(mn,k) = rmnc_bw(mn,k)
          zmnsbh(mn,k) = zmns_bw(mn,k)
-         pmnsbh(mn,k) = pmns_bw(mn,k)                  
+         pmnsbh(mn,k) = pmns_bw(mn,k)
         enddo
        enddo
        call read_boozer_deallocate
@@ -207,7 +207,7 @@ c       write(*,*) mn,xm(mn),xn(mn)
       phipf(2:nsd-1) = p5*(hphip(2:nsd-1) + hphip(3:nsd))
 
 !...  Evaluate and store surface quantities derivatives on RADIAL full mesh
-       
+
       allocate(iotapf(nsd), jpolpf(nsd), jtorpf(nsd),
      1         phippf(nsd), prespf(nsd), stat=k)
       if (k .ne. 0) stop 'Allocation error in get_ballooning_grate'
@@ -221,11 +221,11 @@ c      ohs2 = 2.0_dp*dble(nsd-1)                       ! ds to differentiate on 
       jtorpf(2:nsd-1) = ohs2*(hjtor(3:nsd) - hjtor(2:nsd-1))
       jpolpf(2:nsd-1) = ohs2*(hjpol(3:nsd) - hjpol(2:nsd-1))
       phippf(2:nsd-1) = ohs2*(hphip(3:nsd) - hphip(2:nsd-1))
-       
+
       deallocate(hiota,hpres,hjtor,hjpol,hphip)
 
 !...  store (m,n)-descriptors
-  
+
       allocate (xnb(mnboz), xmb(mnboz), stat=k)
       if (k .ne. 0) stop 'Allocation error in get_ballooning_grate'
       xnb=xn
@@ -235,11 +235,11 @@ c      ohs2 = 2.0_dp*dble(nsd-1)                       ! ds to differentiate on 
 !           their derivatives on RADIAL full mesh
 
       allocate (rmncbf(mnboz,nsd), zmnsbf(mnboz,nsd), pmnsbf(mnboz,nsd),
-     1          bmncbf(mnboz,nsd), rmncpbf(mnboz,nsd), 
+     1          bmncbf(mnboz,nsd), rmncpbf(mnboz,nsd),
      2          zmnspbf(mnboz,nsd),pmnspbf(mnboz,nsd),
      3          bmncpbf(mnboz,nsd), stat=k)
       if (k .ne. 0) stop 'Allocation error'
- 
+
       rmncbf=zero; zmnsbf=zero; pmnsbf=zero; bmncbf=zero
       rmncpbf=zero; zmnspbf=zero; pmnspbf=zero; bmncpbf=zero
       do mn = 1,mnboz
@@ -256,8 +256,8 @@ c      ohs2 = 2.0_dp*dble(nsd-1)                       ! ds to differentiate on 
          bmncbf(mn,k) = p5*(bmncbh(mn,k+1)
      1    +bmncbh(mn,k))
 
-!...   Boozer Fourier coefficients radial derivatives on RADIAL full mesh      
-       
+!...   Boozer Fourier coefficients radial derivatives on RADIAL full mesh
+
          rmncpbf(mn,k) = ohs2*(rmncbh(mn,k+1)
      1    -rmncbh(mn,k))
          zmnspbf(mn,k) = ohs2*(zmnsbh(mn,k+1)
@@ -266,7 +266,7 @@ c      ohs2 = 2.0_dp*dble(nsd-1)                       ! ds to differentiate on 
      1    -pmnsbh(mn,k))
          bmncpbf(mn,k) = ohs2*(bmncbh(mn,k+1)
      1    -bmncbh(mn,k))
-       
+
        enddo
        enddo
 
@@ -278,11 +278,11 @@ c      ohs2 = 2.0_dp*dble(nsd-1)                       ! ds to differentiate on 
      2  rjacobs(ig,nsd),gsssup(ig,nsd), gttsup(ig,nsd), gzzsup(ig,nsd),
      3  gstsup(ig,nsd), gszsup(ig,nsd),
      4  gtzsup(ig,nsd), brho(ig,nsd), stat=istat)
-     
+
        flux_surface: do ks = 2,nsd-1
-       
+
 !...   values of surface quantities at current surface
-   
+
        phipc=phipf(ks)                            ! toroidal magnetic flux
        iotac=iotaf(ks)                            ! iota
        iotapc=iotapf(ks)                          ! radial iota derivative
@@ -326,7 +326,7 @@ c      ohs2 = 2.0_dp*dble(nsd-1)                       ! ds to differentiate on 
        rth = zero
        zs = zero
        zze = zero
-       zth = zero  
+       zth = zero
 
        fourier: do j = 1,mnboz             ! Fourier invert B, R, Z, Phi and derivatives
 
@@ -351,17 +351,17 @@ c      ohs2 = 2.0_dp*dble(nsd-1)                       ! ds to differentiate on 
          phis = phis+pmnspbf(j,ks)*ssine                   ! ..... radial derivative
 
        enddo fourier
-       
+
        phiboo = phiboo + zetang
 !============
 !   END FOURIER INVERSION
 !============
 
-       num1 = (iotac*jtorc-jpolc)*phipc    
+       num1 = (iotac*jtorc-jpolc)*phipc
        num2 = (iotac*jtorc-jpolc)*phippc+(iotapc*jtorc+
-     1       iotac*jtorpc-jpolpc)*phipc 
+     1       iotac*jtorpc-jpolpc)*phipc
 
-       ibf2 = one/bfield(lf,ks)**2    
+       ibf2 = one/bfield(lf,ks)**2
        ibf3 = -2.0_dp/bfield(lf,ks)**3
 
 !...   Jacobian from cylindrical to Boozer  !note: this is sqrt(g), not 1/sqrt(g)
@@ -369,18 +369,18 @@ c      ohs2 = 2.0_dp*dble(nsd-1)                       ! ds to differentiate on 
        rjacob(lf,ks) = num1*ibf2                         	! jacobian from cyl. to Boozer
        rjacobze(lf,ks) = num1*bfieldze(lf,ks)*ibf3              ! ..... zeta derivative
        rjacobth(lf,ks) = num1*bfieldth(lf,ks)*ibf3              ! ..... theta derivative
-       rjacobs(lf,ks) = num1*bfields(lf,ks)*ibf3+num2*ibf2      ! ..... radial derivative 
-     
+       rjacobs(lf,ks) = num1*bfields(lf,ks)*ibf3+num2*ibf2      ! ..... radial derivative
+
        rboo2 = rboo**2
        rjac2 = rjacob(lf,ks)**2
        rjac2i = one/rjac2
- 
+
 !...   Boozer lower metric elements
 
        gtssub = rth*rs+zth*zs+rboo2*phith*phis
        gstsub = gtssub
        gzssub = rze*rs+zze*zs+rboo2*phize*phis
-       gszsub = gzssub                                   
+       gszsub = gzssub
        gtzsub = rth*rze+zth*zze+rboo2*phith*phize
        gztsub = gtzsub
        gttsub = (rth**2)+(zth**2)+rboo2*(phith**2)
@@ -397,7 +397,7 @@ c      ohs2 = 2.0_dp*dble(nsd-1)                       ! ds to differentiate on 
      >     *(twopi**2)/(dble(itheta-1)*dble(izeta-1))
 	write(47,'(3e16.8)') zetang,thetang,surf_area_element
        endif
-       
+
 !...   Consistency test:
        if(test_jacob) then
         det = gsssub*(gttsub*gzzsub - gztsub*gtzsub)
@@ -409,11 +409,11 @@ c      ohs2 = 2.0_dp*dble(nsd-1)                       ! ds to differentiate on 
        end if
 
 !...   Boozer upper metric elements
- 
+
        gsssup(lf,ks) = (gttsub*gzzsub-gtzsub*gztsub)*rjac2i
        gttsup(lf,ks) = (gsssub*gzzsub-gszsub*gzssub)*rjac2i
-       gzzsup(lf,ks) = (gsssub*gttsub-gstsub*gtssub)*rjac2i  
-       gstsup(lf,ks) = (gztsub*gzssub-gstsub*gzzsub)*rjac2i       
+       gzzsup(lf,ks) = (gsssub*gttsub-gstsub*gtssub)*rjac2i
+       gstsup(lf,ks) = (gztsub*gzssub-gstsub*gzzsub)*rjac2i
        gtssup = gstsup(lf,ks)
        gszsup(lf,ks) = (gtssub*gtzsub-gttsub*gzssub)*rjac2i
        gzssup = gszsup(lf,ks)
@@ -441,16 +441,16 @@ c      ohs2 = 2.0_dp*dble(nsd-1)                       ! ds to differentiate on 
 
        gaasup = gttsup(lf,ks)+(iotac**2)*gzzsup(lf,ks)
      1          -2.*iotac*gtzsup(lf,ks)
-       gsasup = gstsup(lf,ks)-iotac*gszsup(lf,ks)              
+       gsasup = gstsup(lf,ks)-iotac*gszsup(lf,ks)
 
 !...   Boozer geodesic curvature
 
        den1 = 2.0_dp*(iotac*jtorc-jpolc)*rjacob(lf,ks)
-       cka = (jpolc*rjacobth(lf,ks)+jtorc*rjacobze(lf,ks))/den1        
+       cka = (jpolc*rjacobth(lf,ks)+jtorc*rjacobze(lf,ks))/den1
 
 !...   Boozer normal curvature
 
-       beta = (gstsup(lf,ks)*jtorc-gszsup(lf,ks)*jpolc)/gsssup(lf,ks)    
+       beta = (gstsup(lf,ks)*jtorc-gszsup(lf,ks)*jpolc)/gsssup(lf,ks)
        t1 = iotapc*jtorc+iotac*jtorpc-jpolpc+(phippc/phipc)
      1  *(iotac*jtorc-jpolc)
        t2 = 2.0_dp*prespc/phipc
@@ -469,8 +469,8 @@ c      ohs2 = 2.0_dp*dble(nsd-1)                       ! ds to differentiate on 
 	write(14,'(e15.7,7(2x,e15.7))') gsssup(lf,ks),gttsup(lf,ks),
      1    gzzsup(lf,ks),gstsup(lf,ks),gszsup(lf,ks),gtzsup(lf,ks),
      2    bfield(lf,ks)
-       endif    !ks .eq. nsd-1         
-!       
+       endif    !ks .eq. nsd-1
+!
       if(make_stellgap_data) then
        write(20,'(1x,4(e24.12,2x),e24.12)') thetang,
      1   zetang, bfield(lf,ks), gsssup(lf,ks),
@@ -533,7 +533,7 @@ c
    19  format(e15.7,7(2x,e15.7))
    48  format(e15.7,3(2x,e15.7))
    49  format(e15.7)
-   
+
        if(make_full_torus) then
        itheta = 300; izeta = 300
 c       ks = nsd - 2

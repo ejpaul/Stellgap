@@ -1,0 +1,9 @@
+LIBSTELL=/Users/elizabeth/Documents/Research/STELLOPT/LIBSTELL/Release
+LIBSTELLA=/Users/elizabeth/Documents/Research/STELLOPT/LIBSTELL/Release/libstell.a
+NETCDFDIR=/opt/local
+
+#FC=mpif90
+FC=gfortran
+
+$FC -cpp -O2 -I$LIBSTELL -I$NETCDFDIR/include -I. -I/opt/local/include -L/opt/local/lib -framework Accelerate -c metric_element_create_ver8.46.f 
+$FC -std=gnu -O2 -o xmetric_ver8.46 $LIBSTELLA -lnetcdf -L$NETCDFDIR/lib -lhdf5_hl -lhdf5_fortran -lhdf5 -lnetcdff metric_element_create_ver8.46.o
