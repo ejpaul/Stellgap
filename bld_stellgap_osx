@@ -1,0 +1,14 @@
+LIBSTELL=/Users/elizabeth/Documents/Research/STELLOPT/LIBSTELL/Release
+LIBSTELLA=/Users/elizabeth/Documents/Research/STELLOPT/LIBSTELL/Release/libstell.a
+
+FC=mpif90
+FFLAGS=-O2
+
+cp stellgap_ver5.f temp.f
+$FC -cpp $FFLAGS -DPARALLEL -I/opt/local/include -L/opt/local/lib -framework Accelerate -llapack -I$LIBSTELL -c temp.f
+mv temp.o stellgap.o
+rm temp.f
+
+$FC $FFLAGS -c $OPT Fourier_lib_convolve.f -I$LIBSTELL
+$FC $FFLAGS -c $OPT fitpack.f
+$FC $FFLAGS -o xstgap -I. -I/opt/local/include -L/opt/local/lib -framework Accelerate -I$LIBSTELL $LIBSTELLA stellgap.o Fourier_lib_convolve.o fitpack.o 
