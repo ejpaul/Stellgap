@@ -1,0 +1,15 @@
+MKLINCLUDE="-I${MKLROOT}/include"
+MKLLINK="-L${MKLROOT}/lib/intel64"
+LIBSTELL="${STELLOPT_HOME}/LIBSTELL/Release"
+LIBSTELLA="${STELLOPT_HOME}/libstell.a"
+NETCDFDIR=/burg/opt/netcdf-fortran-4.5.3
+FFLAGS="-fallow-argument-mismatch -std=legacy -v"
+
+FC=mpifort
+cp stellgap_ver5.f temp.f
+$FC -cpp $FFLAGS -DPARALLEL -I$LIBSTELL -c temp.f
+mv temp.o stellgap.o
+
+$FC $FFLAGS -c $OPT Fourier_lib_convolve.f -I$LIBSTELL $MKLINCLUDE
+$FC $FFLAGS -c $OPT fitpack.f
+$FC $FFLAGS -o xstgap -I. $MKLINCLUDE $MKLLINK -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -I$LIBSTELL $LIBSTELLA stellgap.o Fourier_lib_convolve.o fitpack.o 

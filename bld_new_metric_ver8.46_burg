@@ -1,0 +1,7 @@
+LIBSTELL="${STELLOPT_HOME}/LIBSTELL/Release"
+LIBSTELLA="${STELLOPT_HOME}/LIBSTELL/Release/libstell.a"
+NETCDFDIR=/burg/opt/netcdf-fortran-4.5.3
+FC=mpifort
+
+$FC -O2 -c metric_element_create_ver8.46.f -I$LIBSTELL -I$NETCDFDIR/include -I${HDF5INCLUDE}
+$FC -O2 -o xmetric_ver8.46 metric_element_create_ver8.46.o -I$LIBSTELL $LIBSTELLA -L$NETCDFDIR/lib -lhdf5_hl -lhdf5_fortran -lhdf5 -lnetcdff -L${HDF5DIR}
