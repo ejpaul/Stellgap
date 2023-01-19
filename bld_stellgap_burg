@@ -1,7 +1,7 @@
 MKLINCLUDE="-I${MKLROOT}/include"
 MKLLINK="-L${MKLROOT}/lib/intel64"
 LIBSTELL="${STELLOPT_HOME}/LIBSTELL/Release"
-LIBSTELLA="${STELLOPT_HOME}/libstell.a"
+LIBSTELLA="${STELLOPT_HOME}/LIBSTELL/Release/libstell.a"
 NETCDFDIR=/burg/opt/netcdf-fortran-4.5.3
 FFLAGS="-fallow-argument-mismatch -std=legacy -v"
 
